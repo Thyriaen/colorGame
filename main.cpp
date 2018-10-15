@@ -68,7 +68,7 @@ private:
     void loadImage() {
         char* basePath = SDL_GetBasePath();
         std::string str(basePath);
-        strcat(basePath, "../eyeball.png");
+        strcat(basePath, "../alice.jpg");
 
         SDL_Surface* originalImage = IMG_Load(basePath);
         image = SDL_ConvertSurfaceFormat(originalImage, SDL_PIXELFORMAT_ARGB8888, 0);

@@ -19,9 +19,6 @@ Universe::Universe(unsigned int initWidth, unsigned int initHeight)
 std::vector<unsigned char> Universe::getRaw() {
     std::vector<unsigned char> rawPixels(width * height * 4, 0);
 
-
-
-
     unsigned int x = 0;
     unsigned int y = 0;
 
