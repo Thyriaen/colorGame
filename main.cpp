@@ -30,6 +30,8 @@ private:
     SDL_Texture* texture;
     SDL_Surface* image;
 
+    int color;
+
     unsigned char state;
     enum States {
         STOP = 0,
@@ -52,7 +54,7 @@ private:
         window = SDL_CreateWindow( "SDL2",
                                    SDL_WINDOWPOS_UNDEFINED,
                                    SDL_WINDOWPOS_UNDEFINED,
-                                   width, height,
+                                   width/4, height/4,
                                    SDL_WINDOW_SHOWN );
 
         renderer = SDL_CreateRenderer( window,
@@ -101,6 +103,9 @@ private:
         initSDL();
         loadImage();
         createWindow();
+        extractBlue();
+
+        color = 0;
     }
 
     void input() {
@@ -114,18 +119,31 @@ private:
     }
 
     void calculation() {
-        /*
-        vector<unsigned char> newPixels(width * height * 4);
 
-        for( unsigned int i = 0; i < newPixels.size(); i+=4 ) {
-            const unsigned int x = ( i / 4 ) % width;
-            const unsigned int y = i / ( 4 * width );
+    }
 
-            //todo
-
-
+    void extractRed() { //b g r a
+        for(auto it = pixels.begin(); it != pixels.end(); it+=4) {
+            unsigned char value = *(it+2);
+            *(it) = value;
+            *(it+1) = value;
         }
-        */
+    }
+
+    void extractGreen() { //b g r a
+        for(auto it = pixels.begin(); it != pixels.end(); it+=4) {
+            unsigned char value = *(it+1);
+            *(it) = value;
+            *(it+2) = value;
+        }
+    }
+
+    void extractBlue() { //b g r a
+        for(auto it = pixels.begin(); it != pixels.end(); it+=4) {
+            unsigned char value = *(it);
+            *(it+1) = value;
+            *(it+2) = value;
+        }
     }
 
     void output() {
