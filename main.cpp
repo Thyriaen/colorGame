@@ -4,6 +4,8 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <algorithm>
+
 
 using namespace std;
 
@@ -54,7 +56,7 @@ private:
         window = SDL_CreateWindow( "SDL2",
                                    SDL_WINDOWPOS_UNDEFINED,
                                    SDL_WINDOWPOS_UNDEFINED,
-                                   width/4, height/4,
+                                   width, height,
                                    SDL_WINDOW_SHOWN );
 
         renderer = SDL_CreateRenderer( window,
@@ -103,7 +105,7 @@ private:
         initSDL();
         loadImage();
         createWindow();
-        extractBlue();
+        extractRedness();
 
         color = 0;
     }
@@ -143,6 +145,15 @@ private:
             unsigned char value = *(it);
             *(it+1) = value;
             *(it+2) = value;
+        }
+    }
+
+    void extractRedness() {
+        for(auto it = pixels.begin(); it != pixels.end(); it+=4) {
+            unsigned char blueness = *(it+2) - std::min({*(it), *(it+1), *(it+2)});
+            *(it) = blueness;
+            *(it+1) = blueness;
+            *(it+2) = blueness;
         }
     }
 
