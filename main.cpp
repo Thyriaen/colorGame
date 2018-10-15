@@ -105,7 +105,7 @@ private:
         initSDL();
         loadImage();
         createWindow();
-        extractRedness();
+        extractWhiteness();
 
         color = 0;
     }
@@ -148,12 +148,12 @@ private:
         }
     }
 
-    void extractRedness() {
+    void extractWhiteness() {
         for(auto it = pixels.begin(); it != pixels.end(); it+=4) {
-            unsigned char blueness = *(it+2) - std::min({*(it), *(it+1), *(it+2)});
-            *(it) = blueness;
-            *(it+1) = blueness;
-            *(it+2) = blueness;
+            unsigned char Whiteness = std::min({*(it), *(it+1), *(it+2)});
+            *(it) = Whiteness;
+            *(it+1) = Whiteness;
+            *(it+2) = Whiteness;
         }
     }
 
