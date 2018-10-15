@@ -14,6 +14,7 @@ public:
         window = nullptr;
         renderer = nullptr;
         texture = nullptr;
+        image = nullptr;
     }
 
     void run() {
@@ -45,17 +46,13 @@ private:
         SDL_Init( SDL_INIT_EVERYTHING );
         atexit( SDL_Quit );
         IMG_Init(IMG_INIT_JPG);
-
-        SDL_Surface* originalImage = IMG_Load("/home/thyriaen/Documents/code/colorGame/eyeball.png");
-        image = SDL_ConvertSurfaceFormat(originalImage, SDL_PIXELFORMAT_ARGB8888, 0);
-        SDL_FreeSurface(originalImage);
     }
 
     void createWindow() {
         window = SDL_CreateWindow( "SDL2",
                                    SDL_WINDOWPOS_UNDEFINED,
                                    SDL_WINDOWPOS_UNDEFINED,
-                                   image->w, image->h,
+                                   width, height,
                                    SDL_WINDOW_SHOWN );
 
         renderer = SDL_CreateRenderer( window,
@@ -69,29 +66,23 @@ private:
     }
 
     void loadImage() {
-        SDL_Texture * imageTexture = SDL_CreateTexture( renderer,
-                                                        SDL_PIXELFORMAT_ARGB8888,
-                                                        SDL_TEXTUREACCESS_STATIC,
-                                                        image->w,
-                                                        image->h);
+        char* basePath = SDL_GetBasePath();
+        std::string str(basePath);
+        strcat(basePath, "../eyeball.png");
+
+        SDL_Surface* originalImage = IMG_Load(basePath);
+        image = SDL_ConvertSurfaceFormat(originalImage, SDL_PIXELFORMAT_ARGB8888, 0);
+        SDL_FreeSurface(originalImage);
+
         width = (unsigned int)image->w;
         height = (unsigned int)image->h;
-
         auto rawPixels = (unsigned char*)image->pixels;
         int offset = image->w * image->h * 4;
 
         pixels.assign(rawPixels, rawPixels + offset);
-
-        /*
-        SDL_UpdateTexture(imageTexture, nullptr, image->pixels,
-                          image->w * 4);
-
-        SDL_RenderCopy( renderer, imageTexture, nullptr, nullptr );
-        SDL_RenderPresent( renderer );
-        */
     }
 
-    void loadDefault() {
+    void loadRandomImage() {
         pixels.resize( width * height * 4, 0 );
         for( unsigned int i = 0; i < 100; i++ ) {
             const unsigned int x = rand() % width;
@@ -108,8 +99,8 @@ private:
 
     void init() {
         initSDL();
-        createWindow();
         loadImage();
+        createWindow();
     }
 
     void input() {
