@@ -15,10 +15,11 @@ class Universe {
     std::vector<std::vector<Point>> pixels;
 
   public:
+    Universe();
     Universe(unsigned int width, unsigned int height);
-    void setPixel(int x, int y, Point p) {
-        pixels[x][y] = p;
-    }
+    void setPixel(int x, int y, Point p);
+    unsigned int getHeight();
+    unsigned int getWidth();
     std::vector<unsigned char> getRaw();
 };
 

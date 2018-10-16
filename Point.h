@@ -13,10 +13,9 @@ class Point {
     Point();
     Point(unsigned char red, unsigned char green, unsigned char blue);
 
-    /**
-     * @return vector of the pixel in the right format: blue, green, red, alpha
-     */
-    std::vector<unsigned char> getRaw();
+    unsigned char getRed();
+    unsigned char getGreen();
+    unsigned char getBlue();
 
     void setRed(unsigned char value);
     void setGreen(unsigned char value);

@@ -5,6 +5,7 @@
 #include <vector>
 #include <random>
 #include <algorithm>
+#include "Universe.h"
 
 
 using namespace std;
@@ -32,9 +33,10 @@ private:
     SDL_Texture* texture;
     SDL_Surface* image;
 
-    int color;
+    Universe universe;
 
     unsigned char state;
+
     enum States {
         STOP = 0,
         RUNNING = 1
@@ -42,8 +44,6 @@ private:
 
     vector<unsigned char> pixels;
 
-    unsigned int width = 500;
-    unsigned int height = 500;
     const Uint32 timeWindow = 100;
 
     void initSDL() {
@@ -56,7 +56,7 @@ private:
         window = SDL_CreateWindow( "SDL2",
                                    SDL_WINDOWPOS_UNDEFINED,
                                    SDL_WINDOWPOS_UNDEFINED,
-                                   width, height,
+                                   universe.getWidth(), universe.getHeight(),
                                    SDL_WINDOW_SHOWN );
 
         renderer = SDL_CreateRenderer( window,
@@ -66,7 +66,7 @@ private:
         texture = SDL_CreateTexture( renderer,
                                      SDL_PIXELFORMAT_ARGB8888,
                                      SDL_TEXTUREACCESS_STREAMING,
-                                     width, height );
+                                     universe.getWidth(), universe.getHeight() );
     }
 
     void loadImage() {
@@ -78,15 +78,30 @@ private:
         image = SDL_ConvertSurfaceFormat(originalImage, SDL_PIXELFORMAT_ARGB8888, 0);
         SDL_FreeSurface(originalImage);
 
-        width = (unsigned int)image->w;
-        height = (unsigned int)image->h;
+        auto width = (unsigned int)image->w;
+        auto height = (unsigned int)image->h;
         auto rawPixels = (unsigned char*)image->pixels;
-        int offset = image->w * image->h * 4;
+        int size = image->w * image->h * 4;
 
-        pixels.assign(rawPixels, rawPixels + offset);
+        Universe myUni(width, height);
+        //universe = myUni;
+
+        int x = 0;
+        int y = 0;
+        for(auto i = 0; i < size; i+=4) {
+            universe.setPixel(x,y,Point(rawPixels[i+2], rawPixels[i+1], rawPixels[i]));
+            if(++x == universe.getWidth()) {
+                x = 0;
+                y++;
+            }
+        }
+
+        //pixels.assign(rawPixels, rawPixels + size);
     }
 
     void loadRandomImage() {
+        unsigned int width = universe.getWidth();
+        unsigned int height = universe.getHeight();
         pixels.resize( width * height * 4, 0 );
         for( unsigned int i = 0; i < 100; i++ ) {
             const unsigned int x = rand() % width;
@@ -107,7 +122,6 @@ private:
         createWindow();
         extractWhiteness();
 
-        color = 0;
     }
 
     void input() {
@@ -124,30 +138,6 @@ private:
 
     }
 
-    void extractRed() { //b g r a
-        for(auto it = pixels.begin(); it != pixels.end(); it+=4) {
-            unsigned char value = *(it+2);
-            *(it) = value;
-            *(it+1) = value;
-        }
-    }
-
-    void extractGreen() { //b g r a
-        for(auto it = pixels.begin(); it != pixels.end(); it+=4) {
-            unsigned char value = *(it+1);
-            *(it) = value;
-            *(it+2) = value;
-        }
-    }
-
-    void extractBlue() { //b g r a
-        for(auto it = pixels.begin(); it != pixels.end(); it+=4) {
-            unsigned char value = *(it);
-            *(it+1) = value;
-            *(it+2) = value;
-        }
-    }
-
     void extractWhiteness() {
         for(auto it = pixels.begin(); it != pixels.end(); it+=4) {
             unsigned char Whiteness = std::min({*(it), *(it+1), *(it+2)});
@@ -158,16 +148,14 @@ private:
     }
 
     void output() {
-
         SDL_SetRenderDrawColor( renderer, 0, 0, 0, SDL_ALPHA_OPAQUE );
         SDL_RenderClear( renderer );
         SDL_UpdateTexture( texture,
                            nullptr,
                            &pixels[0],
-                           width * 4 );
+                           universe.getWidth() * 4 );
         SDL_RenderCopy( renderer, texture, nullptr, nullptr );
         SDL_RenderPresent( renderer );
-
     }
 
 
@@ -192,6 +180,7 @@ private:
     }
 
     void cleanup() {
+        SDL_FreeSurface( image );
         SDL_DestroyTexture( texture );
         SDL_DestroyRenderer( renderer );
         SDL_DestroyWindow( window );

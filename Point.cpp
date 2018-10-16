@@ -19,13 +19,16 @@ Point::Point(unsigned char red, unsigned char green, unsigned char blue) {
     this->blue = blue;
 }
 
-std::vector<unsigned char> Point::getRaw() {
-    std::vector<unsigned char> pixel(4,0);
-    pixel[0] = blue;
-    pixel[1] = green;
-    pixel[2] = red;
-    return pixel;
+unsigned char Point::getRed() {
+    return red;
 }
+unsigned char Point::getGreen() {
+    return green;
+}
+unsigned char Point::getBlue() {
+    return blue;
+}
+
 
 void Point::setRed(unsigned char value) {
     red = value;

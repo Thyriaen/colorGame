@@ -17,39 +17,62 @@ TEST_CASE( "Testing single points and whiteness") {
     myPoint.setGreen(5);
 
     REQUIRE( myPoint.whiteness() == 5 );
-
-    std::vector<unsigned char> myVector = myPoint.getRaw();
-
-    REQUIRE( (int)myVector[0] == 10 );
-    REQUIRE( (int)myVector[1] == 5 );
-    REQUIRE( (int)myVector[2] == 50 );
-    REQUIRE( myVector[3] == 0 );
 }
 
 TEST_CASE( "new constructor") {
     Point newPoint(30,20,10);
     REQUIRE( newPoint.whiteness() == 10 );
-    std::vector<unsigned char> newVector = newPoint.getRaw();
-
-    REQUIRE( (int)newVector[0] == 10 );
-    REQUIRE( (int)newVector[1] == 20 );
-    REQUIRE( (int)newVector[2] == 30 );
 }
 
 TEST_CASE( "Testing a new universe") {
     Universe myUniverse(3,2);
 
     REQUIRE( myUniverse.getRaw().size() == 24 );
+}
 
-    // todo
-    myUniverse.setPixel(0,0, Point(1,10,70));
-    myUniverse.setPixel(1,0, Point(2,20,80));
-    myUniverse.setPixel(2,0, Point(3,30,90));
-    myUniverse.setPixel(0,1, Point(4,40,100));
-    myUniverse.setPixel(1,1, Point(5,50,110));
-    myUniverse.setPixel(2,1, Point(6,60,120));
+TEST_CASE( "Testing a new universe again ") {
+    Universe myUniverse2(3,5);
 
-    //std::vector<unsigned char> myRawUniverse = myUniverse.getRaw();
+    myUniverse2.setPixel(2,1,Point(10,20,30));
+    myUniverse2.setPixel(0,4,Point(40,50,60));
+    myUniverse2.setPixel(1,2,Point(70,80,90));
+    myUniverse2.setPixel(2,0,Point(1,2,3));
 
+    std::vector<unsigned char> rV2 = myUniverse2.getRaw();
+
+    REQUIRE( myUniverse2.getRaw().size() == 60 );
+
+    REQUIRE( rV2[20] == 30 );
+    REQUIRE( rV2[21] == 20 );
+    REQUIRE( rV2[22] == 10 );
+    REQUIRE( rV2[23] == 0 );
+
+    REQUIRE( rV2[48] == 60 );
+    REQUIRE( rV2[49] == 50 );
+    REQUIRE( rV2[50] == 40 );
+    REQUIRE( rV2[51] == 0 );
+
+    REQUIRE( rV2[28] == 90 );
+    REQUIRE( rV2[29] == 80 );
+    REQUIRE( rV2[30] == 70 );
+    REQUIRE( rV2[31] == 0 );
+
+    REQUIRE( rV2[8] == 3 );
+    REQUIRE( rV2[9] == 2 );
+    REQUIRE( rV2[10] == 1 );
+    REQUIRE( rV2[11] == 0 );
+}
+
+TEST_CASE( "setPoint" ) {
+    Universe newUni(1,1);
+
+    newUni.setPixel(0,0,Point(10,20,40));
+    std::vector<unsigned char> rV = newUni.getRaw();
+
+    REQUIRE( rV.size() == 4);
+
+    REQUIRE( rV[0] == 40 );
+    REQUIRE( rV[1] == 20 );
+    REQUIRE( rV[2] == 10 );
 
 }
