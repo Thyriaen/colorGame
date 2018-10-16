@@ -9,15 +9,17 @@
 
 class Universe {
   private:
-    const unsigned int width;
-    const unsigned int height;
+    unsigned int width;
+    unsigned int height;
 
     std::vector<std::vector<Point>> pixels;
 
   public:
     Universe();
     Universe(unsigned int width, unsigned int height);
+    void init(unsigned int width, unsigned int height);
     void setPixel(int x, int y, Point p);
+    void setPixels(unsigned char* rawPixels);
     unsigned int getHeight();
     unsigned int getWidth();
     std::vector<unsigned char> getRaw();

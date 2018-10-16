@@ -42,8 +42,6 @@ private:
         RUNNING = 1
     };
 
-    vector<unsigned char> pixels;
-
     const Uint32 timeWindow = 100;
 
     void initSDL() {
@@ -72,33 +70,23 @@ private:
     void loadImage() {
         char* basePath = SDL_GetBasePath();
         std::string str(basePath);
-        strcat(basePath, "../alice.jpg");
+        strcat(basePath, "../eyeball.png");
 
-        SDL_Surface* originalImage = IMG_Load(basePath);
-        image = SDL_ConvertSurfaceFormat(originalImage, SDL_PIXELFORMAT_ARGB8888, 0);
-        SDL_FreeSurface(originalImage);
+        image = IMG_Load(basePath);
+        image = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_ARGB8888, 0);
 
         auto width = (unsigned int)image->w;
         auto height = (unsigned int)image->h;
         auto rawPixels = (unsigned char*)image->pixels;
         int size = image->w * image->h * 4;
 
-        Universe myUni(width, height);
-        //universe = myUni;
+        universe.init(width, height);
 
-        int x = 0;
-        int y = 0;
-        for(auto i = 0; i < size; i+=4) {
-            universe.setPixel(x,y,Point(rawPixels[i+2], rawPixels[i+1], rawPixels[i]));
-            if(++x == universe.getWidth()) {
-                x = 0;
-                y++;
-            }
-        }
+        universe.setPixels(rawPixels);
 
-        //pixels.assign(rawPixels, rawPixels + size);
     }
 
+    /*
     void loadRandomImage() {
         unsigned int width = universe.getWidth();
         unsigned int height = universe.getHeight();
@@ -115,12 +103,13 @@ private:
             pixels[ offset + 2 ] = whiteness;        // r
         }
     }
+    */
 
     void init() {
         initSDL();
         loadImage();
         createWindow();
-        extractWhiteness();
+        //extractWhiteness();
 
     }
 
@@ -138,6 +127,7 @@ private:
 
     }
 
+    /*
     void extractWhiteness() {
         for(auto it = pixels.begin(); it != pixels.end(); it+=4) {
             unsigned char Whiteness = std::min({*(it), *(it+1), *(it+2)});
@@ -146,13 +136,14 @@ private:
             *(it+2) = Whiteness;
         }
     }
+    */
 
     void output() {
         SDL_SetRenderDrawColor( renderer, 0, 0, 0, SDL_ALPHA_OPAQUE );
         SDL_RenderClear( renderer );
         SDL_UpdateTexture( texture,
                            nullptr,
-                           &pixels[0],
+                           universe.getRaw().data(),
                            universe.getWidth() * 4 );
         SDL_RenderCopy( renderer, texture, nullptr, nullptr );
         SDL_RenderPresent( renderer );

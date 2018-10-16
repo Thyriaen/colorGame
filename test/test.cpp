@@ -61,6 +61,9 @@ TEST_CASE( "Testing a new universe again ") {
     REQUIRE( rV2[9] == 2 );
     REQUIRE( rV2[10] == 1 );
     REQUIRE( rV2[11] == 0 );
+
+    myUniverse2.setPixels(rV2.data());
+
 }
 
 TEST_CASE( "setPoint" ) {
