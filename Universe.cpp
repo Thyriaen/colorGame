@@ -3,16 +3,13 @@
 //
 
 #include "Universe.h"
-
+#include <algorithm>
 #include <iostream>
 
 Universe::Universe(unsigned int initWidth, unsigned int initHeight)
     : width(initWidth)
     , height(initHeight) {
-    pixels.resize(initHeight);
-    for(int i = 0; i < initHeight; i++) {
-        pixels[i] = std::vector<Point>(initWidth);
-    }
+    pixels.resize(initHeight * initWidth * 4, 0);
 }
 
 // empty universe
@@ -24,26 +21,20 @@ Universe::Universe()
 void Universe::init(unsigned int initWidth, unsigned int initHeight) {
     width = initWidth;
     height = initHeight;
-    pixels.resize(initHeight);
-    for(int i = 0; i < initHeight; i++) {
-        pixels[i] = std::vector<Point>(initWidth);
-    }
+    pixels.resize(initHeight * initWidth * 4, 0);
 }
 
-void Universe::setPixel(int x, int y, Point p) {
-    pixels[y][x] = p;
+void Universe::setPixel(unsigned int x, unsigned int y, unsigned char red, unsigned char green, unsigned char blue) {
+    unsigned int offset = ( width * 4 * y ) + x * 4;
+    pixels[offset] = blue;
+    pixels[offset + 1] = green;
+    pixels[offset + 2] = red;
 }
 
 void Universe::setPixels(unsigned char* rawPixels) {
     int size = width * height * 4;
-    int x = 0;
-    int y = 0;
-    for(auto i = 0; i < size; i+=4) {
-        setPixel(x,y,Point(rawPixels[i+2], rawPixels[i+1], rawPixels[i]));
-        if(++x >= getWidth()) {
-            x = 0;
-            y++;
-        }
+    for(int i = 0; i < size; i++) {
+       pixels[i] = *(rawPixels+i);
     }
 }
 
@@ -55,26 +46,18 @@ unsigned int Universe::getWidth() {
     return width;
 };
 
-
 /**
  * @return right format: blue, green, red, alpha
  */
-std::vector<unsigned char> Universe::getRaw() {
+std::vector<unsigned char> Universe::getPixels() {
+    return pixels;
+}
 
-    std::vector<unsigned char> rawPixels(width * height * 4, 0);
-    unsigned int x = 0;
-    unsigned int y = 0;
-
-    for(auto it = rawPixels.begin(); it != rawPixels.end(); it+=4) {
-        *(it) = pixels[y][x].getBlue();
-        *(it+1) = pixels[y][x].getGreen();
-        *(it+2) = pixels[y][x].getRed();
-
-        if(++x == width) {
-            x = 0;
-            y++;
-        }
-     }
-
-    return rawPixels;
+void Universe::whitenessOnly() {
+    for(auto it = pixels.begin(); it != pixels.end(); it+=4) {
+        unsigned char whiteness = std::min({*(it), *(it+1), *(it+2)});
+        *(it) = whiteness;
+        *(it+1) = whiteness;
+        *(it+2) = whiteness;
+    }
 }

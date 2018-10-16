@@ -113,7 +113,7 @@ private:
         initSDL();
         loadImage();
         createWindow();
-        //extractWhiteness();
+        universe.whitenessOnly();
 
     }
 
@@ -131,23 +131,12 @@ private:
 
     }
 
-    /*
-    void extractWhiteness() {
-        for(auto it = pixels.begin(); it != pixels.end(); it+=4) {
-            unsigned char Whiteness = std::min({*(it), *(it+1), *(it+2)});
-            *(it) = Whiteness;
-            *(it+1) = Whiteness;
-            *(it+2) = Whiteness;
-        }
-    }
-    */
-
     void output() {
         SDL_SetRenderDrawColor( renderer, 0, 0, 0, SDL_ALPHA_OPAQUE );
         SDL_RenderClear( renderer );
         SDL_UpdateTexture( texture,
                            nullptr,
-                           universe.getRaw().data(),
+                           universe.getPixels().data(),
                            universe.getWidth() * 4 );
         SDL_RenderCopy( renderer, texture, nullptr, nullptr );
         SDL_RenderPresent( renderer );

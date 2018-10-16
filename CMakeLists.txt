@@ -6,16 +6,12 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 add_executable(colorGame
         main.cpp
-        Point.cpp
-        Point.h
         Universe.cpp
         Universe.h)
 
 add_executable(testGame
         test/test.cpp
         test/catch.hpp
-        Point.cpp
-        Point.h
         Universe.h
         Universe.cpp)
 

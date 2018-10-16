@@ -2,7 +2,6 @@
 #include "catch.hpp"
 
 #include <iostream>
-#include "../Point.h"
 #include "../Universe.h"
 
 
