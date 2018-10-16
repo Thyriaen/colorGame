@@ -51,6 +51,10 @@ private:
     }
 
     void createWindow() {
+
+        int width = universe.getWidth();
+        int height = universe.getHeight();
+
         window = SDL_CreateWindow( "SDL2",
                                    SDL_WINDOWPOS_UNDEFINED,
                                    SDL_WINDOWPOS_UNDEFINED,

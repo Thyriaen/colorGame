@@ -22,6 +22,8 @@ Universe::Universe()
 }
 
 void Universe::init(unsigned int initWidth, unsigned int initHeight) {
+    width = initWidth;
+    height = initHeight;
     pixels.resize(initHeight);
     for(int i = 0; i < initHeight; i++) {
         pixels[i] = std::vector<Point>(initWidth);
