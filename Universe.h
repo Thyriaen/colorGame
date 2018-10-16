@@ -5,6 +5,8 @@
 #ifndef VULTRI_UNIVERSE_H
 #define VULTRI_UNIVERSE_H
 
+#include <vector>
+
 class Universe {
   private:
     unsigned int width;
