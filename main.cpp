@@ -58,7 +58,8 @@ private:
         window = SDL_CreateWindow( "SDL2",
                                    SDL_WINDOWPOS_UNDEFINED,
                                    SDL_WINDOWPOS_UNDEFINED,
-                                   universe.getWidth(), universe.getHeight(),
+                                   500, 500,
+                                   //universe.getWidth(), universe.getHeight(),
                                    SDL_WINDOW_SHOWN );
 
         renderer = SDL_CreateRenderer( window,
@@ -90,15 +91,16 @@ private:
 
     }
 
-    /*
     void loadRandomImage() {
-        unsigned int width = universe.getWidth();
-        unsigned int height = universe.getHeight();
-        pixels.resize( width * height * 4, 0 );
-        for( unsigned int i = 0; i < 100; i++ ) {
-            const unsigned int x = rand() % width;
-            const unsigned int y = rand() % height;
-            const unsigned int offset = ( width * 4 * y ) + x * 4;
+
+        universe.init(100,100);
+
+        std::vector<unsigned char> pixels(100 * 100 * 4);
+
+        for( unsigned int i = 0; i < 50; i++ ) {
+            const unsigned int x = rand() % 100;
+            const unsigned int y = rand() % 100;
+            const unsigned int offset = ( 100 * 4 * y ) + x * 4;
 
             const unsigned char whiteness = rand() % 256;
 
@@ -106,12 +108,15 @@ private:
             pixels[ offset + 1 ] = whiteness;        // g
             pixels[ offset + 2 ] = whiteness;        // r
         }
+
+        universe.setPixels(pixels.data());
     }
-    */
+
 
     void init() {
         initSDL();
-        loadImage();
+        //loadImage();
+        loadRandomImage();
         createWindow();
         universe.whitenessOnly();
 
