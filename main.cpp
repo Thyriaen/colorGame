@@ -1,6 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_render.h>
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 #include <iostream>
 #include <vector>
 #include <random>
@@ -74,7 +74,7 @@ private:
     void loadImage() {
         char* basePath = SDL_GetBasePath();
         std::string str(basePath);
-        strcat(basePath, "../eyeball.png");
+        strcat(basePath, "../alice.jpg");
 
         image = IMG_Load(basePath);
         image = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_ARGB8888, 0);
