@@ -90,6 +90,65 @@ unsigned char Universe::getOrientation(int fromX, int fromY, int toX, int toY) {
     return  direction;
 }
 
+int Universe::getForce(int fromX, int fromY, int toX, int toY) {
+    int distance = getDistance(fromX, fromY, toX, toY);
+    if(distance >= 255) {
+        return 0;
+    }
+    return distance >> 5;
+}
+
+void Universe::next() {
+    std::vector<unsigned char> newPixels(pixels);
+    int toX = 0;
+    int toY = 0;
+
+    for(int i = 0; i < pixels.size(); i+=4) {
+        int forceX = 0;
+        int forceY = 0;
+
+        int fromX = 0;
+        int fromY = 0;
+        for(int j = 0; j < pixels.size(); j+=4) {
+            if(i != j) {
+                int distanceX = fromX - toX;
+                int distanceY = fromY - toY;
+                unsigned char whiteness = std::min({pixels[i], pixels[i+1], pixels[i+2]});
+                forceX += int(1024.0 / distanceX * (whiteness >> 5);
+                forceY += int(1024.0 / distanceY) * (whiteness >> 5);
+
+                if( ++fromX > width ) {
+                    fromX = 0;
+                    fromY++;
+                }
+            }
+        }
+
+
+        if( ++toX > width ) {
+            toX = 0;
+            toY++;
+        }
+    }
+    pixels = newPixels;
+}
+
+/*
+ *  SOUTHWEST = 0
+ *  NORTHEAST = 6
+
+ *  NORTH = 2
+ *  SOUTH = 4
+
+ *  NORTHWEST = 3
+ *  SOUTHEAST = 5
+
+ *  WEST = 1
+ *  EAST = 7
+ */
+
+
+
 
 void Universe::whitenessOnly() {
     for(auto it = pixels.begin(); it != pixels.end(); it+=4) {

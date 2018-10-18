@@ -115,8 +115,8 @@ private:
 
     void init() {
         initSDL();
-        loadImage();
-        //loadRandomImage();
+        //loadImage();
+        loadRandomImage();
         createWindow();
         universe.whitenessOnly();
 
@@ -133,7 +133,7 @@ private:
     }
 
     void calculation() {
-
+        universe.next();
     }
 
     void output() {
