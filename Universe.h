@@ -28,7 +28,7 @@ class Universe {
 
 
     int getDistance(int x1, int y1, int x2, int y2);
-    unsigned char getOrientation(int x1, int y1, int x2, int y2);
+    unsigned char getOrientation(int fromX, int fromY, int toX, int toY);
 
 
     void whitenessOnly();

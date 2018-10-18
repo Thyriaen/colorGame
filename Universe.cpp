@@ -5,6 +5,7 @@
 #include "Universe.h"
 #include <algorithm>
 #include <iostream>
+#include <cmath>
 
 Universe::Universe(unsigned int initWidth, unsigned int initHeight)
     : width(initWidth)
@@ -54,12 +55,38 @@ int Universe::getDistance(int x1, int y1, int x2, int y2) {
     return std::max(abs(x1-x2), abs(y1-y2));
 }
 
+/*
+ *  SOUTHWEST = 0
+ *  WEST = 1
+ *  NORTH = 2
+ *  NORTHWEST = 3
+ *  SOUTH = 4
+ *  SOUTHEAST = 5
+ *  NORTHEAST = 6 
+ *  EAST = 7
+ */
 unsigned char Universe::getOrientation(int fromX, int fromY, int toX, int toY) {
     int x = toX - fromX;
     int y = toY - fromY;
 
+    if(y == 0 && x > 0) {
+        return 7;
+    }
+    if(x == 0 && y < 0) {
+        return 4;
+    }
+
     unsigned char direction = 0;
-    // todo
+    if(x > 0) {
+        direction += 4;
+    }
+    if(y > 0) {
+        direction += 2;
+    }
+    if(abs(x) > abs(y) || (abs(x) == abs(y) && std::signbit(x) != std::signbit(y))) {
+        direction += 1;
+    }
+
     return  direction;
 }
 

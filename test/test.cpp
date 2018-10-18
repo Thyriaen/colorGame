@@ -4,7 +4,7 @@
 #include <iostream>
 #include "../Universe.h"
 
-
+/*
 TEST_CASE( "Testing single points and whiteness") {
     Point myPoint;
     myPoint.setGreen(20);
@@ -76,5 +76,31 @@ TEST_CASE( "setPoint" ) {
     REQUIRE( rV[0] == 40 );
     REQUIRE( rV[1] == 20 );
     REQUIRE( rV[2] == 10 );
+}
+ */
+
+TEST_CASE( "get Distance function" ) {
+    Universe universe(16, 16);
+
+    REQUIRE( universe.getOrientation(8, 4, 0, 0) == 1 );
+    REQUIRE( universe.getOrientation(4, 8, 0, 0) == 0 );
+    REQUIRE( universe.getOrientation(-4, 8, 0, 0) == 4 );
+    REQUIRE( universe.getOrientation(-8, 4, 0, 0) == 5 );
+    REQUIRE( universe.getOrientation(-8, -4, 0, 0) == 7 );
+    REQUIRE( universe.getOrientation(-4, -8, 0, 0) == 6 );
+    REQUIRE( universe.getOrientation(4, -8, 0, 0) == 2 );
+    REQUIRE( universe.getOrientation(8, -4, 0, 0) == 3 );
+    REQUIRE( universe.getOrientation(8, 8, 0, 0) == 0 );
+    REQUIRE( universe.getOrientation(8, -8, 0, 0) == 3 );
+    REQUIRE( universe.getOrientation(-8, -8, 0, 0) == 6 );
+    REQUIRE( universe.getOrientation(-8, 8, 0, 0) == 5 );
+    REQUIRE( universe.getOrientation(0, -8, 0, 0) == 2 );
+    REQUIRE( universe.getOrientation(0, 8, 0, 0) == 4 );
+    REQUIRE( universe.getOrientation(8, 0, 0, 0) == 1 );
+    REQUIRE( universe.getOrientation(-8, 0, 0, 0) == 7 );
+
+    std::cout << int(universe.getOrientation(7,9, 0, -16)) << std::endl;
+    std::cout << int(universe.getOrientation(1, 15, -12, 12)) << std::endl;
+    std::cout << int(universe.getOrientation(-10, -4, 4, 12)) << std::endl;
 
 }

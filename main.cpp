@@ -75,7 +75,7 @@ private:
     void loadImage() {
         char* basePath = SDL_GetBasePath();
         std::string str(basePath);
-        strcat(basePath, "../alice.jpg");
+        strcat(basePath, "../jec.png");
 
         image = IMG_Load(basePath);
         image = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_ARGB8888, 0);
@@ -115,8 +115,8 @@ private:
 
     void init() {
         initSDL();
-        //loadImage();
-        loadRandomImage();
+        loadImage();
+        //loadRandomImage();
         createWindow();
         universe.whitenessOnly();
 
