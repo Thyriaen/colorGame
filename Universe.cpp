@@ -46,12 +46,23 @@ unsigned int Universe::getWidth() {
     return width;
 };
 
-/**
- * @return right format: blue, green, red, alpha
- */
 std::vector<unsigned char> Universe::getPixels() {
     return pixels;
 }
+
+int Universe::getDistance(int x1, int y1, int x2, int y2) {
+    return std::max(abs(x1-x2), abs(y1-y2));
+}
+
+unsigned char Universe::getOrientation(int fromX, int fromY, int toX, int toY) {
+    int x = toX - fromX;
+    int y = toY - fromY;
+
+    unsigned char direction = 0;
+    // todo
+    return  direction;
+}
+
 
 void Universe::whitenessOnly() {
     for(auto it = pixels.begin(); it != pixels.end(); it+=4) {

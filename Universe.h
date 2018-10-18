@@ -13,6 +13,7 @@ class Universe {
     unsigned int height;
 
     std::vector<unsigned char> pixels;
+    std::vector<int> forces;
 
   public:
     Universe();
@@ -23,6 +24,12 @@ class Universe {
     unsigned int getHeight();
     unsigned int getWidth();
     std::vector<unsigned char> getPixels();
+    void next();
+
+
+    int getDistance(int x1, int y1, int x2, int y2);
+    unsigned char getOrientation(int x1, int y1, int x2, int y2);
+
 
     void whitenessOnly();
 };
