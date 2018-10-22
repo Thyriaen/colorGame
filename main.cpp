@@ -91,16 +91,16 @@ private:
 
     }
 
-    void loadRandomImage() {
+    void loadRandomImage(int size) {
 
-        universe.init(100,100);
+        universe.init(size,size);
 
-        std::vector<unsigned char> pixels(100 * 100 * 4);
+        std::vector<unsigned char> pixels(size * size * 4);
 
-        for( unsigned int i = 0; i < 50; i++ ) {
-            const unsigned int x = rand() % 100;
-            const unsigned int y = rand() % 100;
-            const unsigned int offset = ( 100 * 4 * y ) + x * 4;
+        for( unsigned int i = 0; i < (size/2); i++ ) {
+            const unsigned int x = rand() % size;
+            const unsigned int y = rand() % size;
+            const unsigned int offset = ( size * 4 * y ) + x * 4;
 
             const unsigned char whiteness = rand() % 256;
 
@@ -116,7 +116,7 @@ private:
     void init() {
         initSDL();
         //loadImage();
-        loadRandomImage();
+        loadRandomImage(50);
         createWindow();
         universe.whitenessOnly();
 

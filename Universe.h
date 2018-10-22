@@ -26,7 +26,7 @@ class Universe {
     std::vector<unsigned char> getPixels();
     void next();
 
-
+    void colorizePoint(int x, int y, int red, int green, int blue);
     int getDistance(int x1, int y1, int x2, int y2);
     int getForce(int fromX, int fromY, int toX, int toY);
     unsigned char getOrientation(int fromX, int fromY, int toX, int toY);

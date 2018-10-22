@@ -98,6 +98,26 @@ int Universe::getForce(int fromX, int fromY, int toX, int toY) {
     return distance >> 5;
 }
 
+/*
+void Universe::colorizePoint(int x, int y, int red, int green, int blue) {
+    unsigned int offset = ( width * 4 * y ) + x * 4;
+
+    excess = 500 + pixel[red] - 255;
+
+    255 or
+
+
+
+    int excess = red + pixels[offset];
+    if(excess > 0) {
+        pixels[offset] += excess;
+    } else {
+
+    }
+
+}
+*/
+
 void Universe::next() {
     std::vector<unsigned char> newPixels(pixels);
     int toX = 0;
@@ -114,7 +134,7 @@ void Universe::next() {
                 int distanceX = fromX - toX;
                 int distanceY = fromY - toY;
                 unsigned char whiteness = std::min({pixels[i], pixels[i+1], pixels[i+2]});
-                forceX += int(1024.0 / distanceX * (whiteness >> 5);
+                forceX += int(1024.0 / distanceX) * (whiteness >> 5);
                 forceY += int(1024.0 / distanceY) * (whiteness >> 5);
 
                 if( ++fromX > width ) {
@@ -130,7 +150,7 @@ void Universe::next() {
             toY++;
         }
     }
-    pixels = newPixels;
+    //pixels = newPixels;
 }
 
 /*
