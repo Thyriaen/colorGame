@@ -14,23 +14,14 @@ enum Land { basicBlue, basicGreen, basicWhite, shockBG, shockBW, shockGW, checkB
 
 class Mana {
   protected:
-    int islands;
-    int forests;
-    int plains;
-
-    int sBG;
-    int sBW;
-    int sGW;
-
-    int cBG;
-    int cBW;
-    int cGW;
+    std::vector<int> numberOfLands;
   public:
     Mana(int island, int forest, int plain, int sBGs, int sBWs, int sGWs, int cBGs, int cBWs, int cGWs);
     Mana();
-    int getLands() {
-        return islands + forests + plains + sBG + sBW + sGW + cBG + cBW + cGW;
-    }
+    int getLands();
+    int getBlues();
+    int getGreens();
+    int getWhites();
 };
 
 class Hand : public Mana {
@@ -50,6 +41,7 @@ class Deck : public Mana {
 class Board : public Mana {
   public:
     Board();
+    int getPoints();
 };
 
 #endif //MANACALC_MANA_H
