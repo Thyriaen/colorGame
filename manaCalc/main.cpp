@@ -3,7 +3,6 @@
 
 #include "Deck.h"
 
-
 void drawBased(int turn) {
     std::cout << turn << ". turn OnDraw" << std::endl;
 

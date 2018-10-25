@@ -33,6 +33,12 @@ Deck::Deck(int island, int forest, int plain, int sBGs, int sBWs, int sGWs, int 
         spells(35) {
 }
 
+Land Deck::drawMana() {
+    std::uniform_int_distribution<int> distribution(1,getLands());
+    int card = distribution(generator);
+
+}
+
 Board::Board() :
         Mana() {
 }
