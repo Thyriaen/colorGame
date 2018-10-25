@@ -39,7 +39,8 @@ private:
 
     enum States {
         STOP = 0,
-        RUNNING = 1
+        RUNNING = 1,
+        SKIP = 2
     };
 
     const Uint32 timeWindow = 100;
@@ -133,7 +134,11 @@ private:
     }
 
     void calculation() {
-        universe.next();
+        if(state == RUNNING) {
+            state = SKIP;
+        } else {
+            universe.next();
+        }
     }
 
     void output() {
