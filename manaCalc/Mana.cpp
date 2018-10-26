@@ -36,8 +36,6 @@ int Mana::getWhites() {
            numberOfLands[checkGW] + numberOfLands[checkBW];
 }
 
-
-
 int Mana::getLands() {
     int landNumber = 0;
     for(auto const &value : numberOfLands) {
