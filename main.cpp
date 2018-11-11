@@ -8,6 +8,13 @@
 #include "Universe.h"
 
 
+/*
+ * http://stephaniehurlburt.com/blog/2017/7/14/beginner-friendly-vulkan-tutorials
+ * http://gameprogrammingpatterns.com/game-loop.html
+ * http://www.duskborn.com/a-simple-vulkan-compute-example/
+ * https://gafferongames.com/post/fix_your_timestep/
+ */
+
 using namespace std;
 
 class Application {

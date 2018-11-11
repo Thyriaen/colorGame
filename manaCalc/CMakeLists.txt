@@ -3,6 +3,5 @@ project(manaCalc)
 
 set(CMAKE_CXX_STANDARD 17)
 
-
-add_executable(manaCalc Mana.cpp Mana.h manaCalc.cpp)
+add_executable(Calc mainCalc.cpp)
 add_executable(main main.cpp Deck.cpp Deck.h)

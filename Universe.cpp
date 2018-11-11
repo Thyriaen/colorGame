@@ -114,7 +114,7 @@ void Universe::next() {
                 int distanceX = fromX - toX;
                 int distanceY = fromY - toY;
                 unsigned char whiteness = std::min({pixels[i], pixels[i+1], pixels[i+2]});
-                forceX += int(1024.0 / distanceX * (whiteness >> 5);
+                forceX += int(1024.0 / distanceX) * (whiteness >> 5);
                 forceY += int(1024.0 / distanceY) * (whiteness >> 5);
 
                 if( ++fromX > width ) {

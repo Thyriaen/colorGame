@@ -96,11 +96,14 @@ double maximize(int wP, int bP, int gP, int swbP, int swgP, int sbgP, int cwbP, 
     }
 }
 
+
+
+
 int main() {
 
     double best = 0;
 
-    for(int w=0; w<=5; w++) {
+    for(int w=0; w<=25; w++) {
         for(int b=0; b<=25; b++) {
             for(int g=0; g<=25; g++) {
                 for(int swb=0; swb<=4; swb++) {
