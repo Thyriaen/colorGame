@@ -133,22 +133,6 @@ void Universe::next() {
     pixels = newPixels;
 }
 
-/*
- *  SOUTHWEST = 0
- *  NORTHEAST = 6
-
- *  NORTH = 2
- *  SOUTH = 4
-
- *  NORTHWEST = 3
- *  SOUTHEAST = 5
-
- *  WEST = 1
- *  EAST = 7
- */
-
-
-
 
 void Universe::whitenessOnly() {
     for(auto it = pixels.begin(); it != pixels.end(); it+=4) {

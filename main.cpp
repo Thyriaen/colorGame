@@ -66,7 +66,7 @@ private:
         window = SDL_CreateWindow( "SDL2",
                                    SDL_WINDOWPOS_UNDEFINED,
                                    SDL_WINDOWPOS_UNDEFINED,
-                                   500, 500,
+                                   640, 360,
                                    //universe.getWidth(), universe.getHeight(),
                                    SDL_WINDOW_SHOWN );
 
@@ -83,7 +83,7 @@ private:
     void loadImage() {
         char* basePath = SDL_GetBasePath();
         std::string str(basePath);
-        strcat(basePath, "../jec.png");
+        strcat(basePath, "../alice.jpg");
 
         image = IMG_Load(basePath);
         image = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_ARGB8888, 0);
@@ -99,16 +99,16 @@ private:
 
     }
 
-    void loadRandomImage(int size) {
+    void loadRandomImage(int height, int width) {
 
-        universe.init(size,size);
+        universe.init(width, height);
 
-        std::vector<unsigned char> pixels(size * size * 4);
+        std::vector<unsigned char> pixels(height * width * 4);
 
-        for( unsigned int i = 0; i < (size/2); i++ ) {
-            const unsigned int x = rand() % size;
-            const unsigned int y = rand() % size;
-            const unsigned int offset = ( size * 4 * y ) + x * 4;
+        for( unsigned int i = 0; i < height/2; i++ ) {
+            const unsigned int x = rand() % width;
+            const unsigned int y = rand() % height;
+            const unsigned int offset = ( width * 4 * y ) + x * 4;
 
             const unsigned char whiteness = rand() % 256;
 
@@ -123,8 +123,8 @@ private:
 
     void init() {
         initSDL();
-        //loadImage();
-        loadRandomImage(50);
+        loadImage();
+        //loadRandomImage(72,128);
         createWindow();
         universe.whitenessOnly();
 
