@@ -7,10 +7,13 @@
 #include <iostream>
 #include <cmath>
 
+// requires width and height divisible by 40
 Universe::Universe(unsigned int initWidth, unsigned int initHeight)
     : width(initWidth)
     , height(initHeight) {
     pixels.resize(initHeight * initWidth * 4, 0);
+    xFields = width / 40;
+    yFields = height / 40;
 }
 
 // empty universe
@@ -23,6 +26,9 @@ void Universe::init(unsigned int initWidth, unsigned int initHeight) {
     width = initWidth;
     height = initHeight;
     pixels.resize(initHeight * initWidth * 4, 0);
+    xFields = width / 40;
+    yFields = height / 40;
+    fields = xFields * yFields;
 }
 
 void Universe::setPixel(unsigned int x, unsigned int y, unsigned char red, unsigned char green, unsigned char blue) {
@@ -98,7 +104,42 @@ int Universe::getForce(int fromX, int fromY, int toX, int toY) {
     return distance >> 5;
 }
 
+
+void Universe::calculateRepresentatives(std::vector<unsigned int>* repValues, std::vector<unsigned char>* repX, std::vector<unsigned char>* repY) {
+    int xField = 0;
+    int yField = 0;
+
+    for(int y=0; y<40; y++) {
+        for(int x=0; x<40; x++) {
+            unsigned int offset = ( width * 160 * yField + width * 4 * y ) + x * 4 + xField * 160;
+
+            // continue
+        }
+    }
+
+}
+
 void Universe::next() {
+    std::vector<unsigned char> newPixels(pixels);
+
+    std::vector<unsigned int> repValues(fields * 4);
+    std::vector<unsigned char> repX(fields * 4);
+    std::vector<unsigned char> repY(fields * 4);
+
+    calculateRepresentatives(&repValues, &repX, &repY);
+
+
+
+
+
+
+    pixels = newPixels;
+}
+
+
+
+
+void Universe::next2() {
     std::vector<unsigned char> newPixels(pixels);
     int toX = 0;
     int toY = 0;
