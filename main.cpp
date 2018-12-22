@@ -66,7 +66,7 @@ private:
         window = SDL_CreateWindow( "SDL2",
                                    SDL_WINDOWPOS_UNDEFINED,
                                    SDL_WINDOWPOS_UNDEFINED,
-                                   640, 360,
+                                   1280, 720,
                                    //universe.getWidth(), universe.getHeight(),
                                    SDL_WINDOW_SHOWN );
 
@@ -99,13 +99,14 @@ private:
 
     }
 
-    void loadRandomImage(int height, int width) {
+    void loadRandomImage(unsigned int width, unsigned int height) {
 
         universe.init(width, height);
 
         std::vector<unsigned char> pixels(height * width * 4);
 
-        for( unsigned int i = 0; i < height/2; i++ ) {
+
+        for( unsigned int i = 0; i < 1000; i++ ) {
             const unsigned int x = rand() % width;
             const unsigned int y = rand() % height;
             const unsigned int offset = ( width * 4 * y ) + x * 4;
@@ -117,14 +118,15 @@ private:
             pixels[ offset + 2 ] = whiteness;        // r
         }
 
+
         universe.setPixels(pixels.data());
     }
 
 
     void init() {
         initSDL();
-        loadImage();
-        //loadRandomImage(72,128);
+        //loadImage();
+        loadRandomImage(1280, 720);
         createWindow();
         universe.whitenessOnly();
 

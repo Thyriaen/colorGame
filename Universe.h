@@ -14,6 +14,7 @@ class Universe {
     unsigned int xFields;
     unsigned int yFields;
     unsigned int fields;
+    unsigned int fieldSize;
 
     std::vector<unsigned char> pixels;
     std::vector<int> forces;
@@ -29,7 +30,8 @@ class Universe {
     std::vector<unsigned char> getPixels();
     void next();
 
-    void calculateRepresentatives(std::vector<unsigned int>* repValues, std::vector<unsigned char>* repX, std::vector<unsigned char>* repY);
+    void calculateRepresentative(int startIndex, int* repValue, int* repX, int* repY);
+    void calculateRepresentatives(std::vector<int> &repValues, std::vector<int> &repX, std::vector<int> &repY);
     int getDistance(int x1, int y1, int x2, int y2);
     int getForce(int fromX, int fromY, int toX, int toY);
     unsigned char getOrientation(int fromX, int fromY, int toX, int toY);

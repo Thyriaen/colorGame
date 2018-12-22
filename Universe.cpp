@@ -1,19 +1,19 @@
-//
-// Created by thyriaen on 08.10.18.
-//
-
 #include "Universe.h"
 #include <algorithm>
 #include <iostream>
 #include <cmath>
+
+#define FS 40
 
 // requires width and height divisible by 40
 Universe::Universe(unsigned int initWidth, unsigned int initHeight)
     : width(initWidth)
     , height(initHeight) {
     pixels.resize(initHeight * initWidth * 4, 0);
-    xFields = width / 40;
-    yFields = height / 40;
+    fieldSize = FS;
+    xFields = width / fieldSize;
+    yFields = height / fieldSize;
+    fields = xFields * yFields;
 }
 
 // empty universe
@@ -26,8 +26,9 @@ void Universe::init(unsigned int initWidth, unsigned int initHeight) {
     width = initWidth;
     height = initHeight;
     pixels.resize(initHeight * initWidth * 4, 0);
-    xFields = width / 40;
-    yFields = height / 40;
+    fieldSize = FS;
+    xFields = width / fieldSize;
+    yFields = height / fieldSize;
     fields = xFields * yFields;
 }
 
@@ -72,6 +73,7 @@ int Universe::getDistance(int x1, int y1, int x2, int y2) {
  *  EAST = 7
  */
 unsigned char Universe::getOrientation(int fromX, int fromY, int toX, int toY) {
+
     int x = toX - fromX;
     int y = toY - fromY;
 
@@ -94,26 +96,74 @@ unsigned char Universe::getOrientation(int fromX, int fromY, int toX, int toY) {
     }
 
     return  direction;
+
 }
 
 int Universe::getForce(int fromX, int fromY, int toX, int toY) {
+
     int distance = getDistance(fromX, fromY, toX, toY);
     if(distance >= 255) {
         return 0;
     }
     return distance >> 5;
+
 }
 
+// maybe use iterators
+void Universe::calculateRepresentative(int startIndex, int* repValue, int* repX, int* repY) {
 
-void Universe::calculateRepresentatives(std::vector<unsigned int>* repValues, std::vector<unsigned char>* repX, std::vector<unsigned char>* repY) {
-    int xField = 0;
-    int yField = 0;
+    std::vector<int> xWeights(fieldSize * 4);
+    std::vector<int> yWeights(fieldSize * 4);
 
-    for(int y=0; y<40; y++) {
-        for(int x=0; x<40; x++) {
-            unsigned int offset = ( width * 160 * yField + width * 4 * y ) + x * 4 + xField * 160;
+    for(int y = 0; y < fieldSize; y++) {
+        for(int x = 0; x < fieldSize; x++) {
+            int offset = startIndex + (( width * y +  x) << 2);
 
-            // continue
+            *repValue += pixels[offset];
+            *(repValue + 1) += pixels[offset+1];
+            *(repValue + 2) += pixels[offset+2];
+
+            xWeights[y] += pixels[offset];
+            xWeights[y+1] += pixels[offset+1];
+            xWeights[y+2] += pixels[offset+2];
+
+            yWeights[x] += pixels[offset];
+            yWeights[x+1] += pixels[offset+1];
+            yWeights[x+2] += pixels[offset+2];
+        }
+    }
+
+    for(int i = 1; i < xWeights.size(); i+=4) {
+        int index = i >> 2;
+        *repX += index * xWeights[i];
+        *(repX+1) += index * xWeights[i];
+        *(repX+2) += index * xWeights[i];
+
+        *repY += index * yWeights[i];
+        *(repY+1) += index * yWeights[i];
+        *(repY+2) += index * yWeights[i];
+    }
+
+    for(int i = 0; i<3; i++) {
+        if(*(repValue+i) == 0)  {
+            *(repX+i) = 0;
+            *(repY+i) = 0;
+        } else {
+            *(repX+i) /= *(repValue+i);
+            *(repY+i) /= *(repValue+i);
+        }
+    }
+
+}
+
+void Universe::calculateRepresentatives(std::vector<int> &repValues, std::vector<int> &repX, std::vector<int> &repY) {
+
+    int offset = 0;
+    int field = 0;
+    for(int y = 0; y < yFields; y++) {
+        for(int x = 0; x < xFields; x++) {
+            calculateRepresentative(offset, &repValues[field], &repX[field], &repY[field] );
+            field++;
         }
     }
 
@@ -122,23 +172,18 @@ void Universe::calculateRepresentatives(std::vector<unsigned int>* repValues, st
 void Universe::next() {
     std::vector<unsigned char> newPixels(pixels);
 
-    std::vector<unsigned int> repValues(fields * 4);
-    std::vector<unsigned char> repX(fields * 4);
-    std::vector<unsigned char> repY(fields * 4);
+    std::vector<int> repValues(fields * 4);
+    std::vector<int> repX(fields * 4);
+    std::vector<int> repY(fields * 4);
 
-    calculateRepresentatives(&repValues, &repX, &repY);
-
-
-
-
-
+    calculateRepresentatives(repValues, repX, repY);
 
     pixels = newPixels;
 }
 
 
 
-
+/*
 void Universe::next2() {
     std::vector<unsigned char> newPixels(pixels);
     int toX = 0;
@@ -173,7 +218,7 @@ void Universe::next2() {
     }
     pixels = newPixels;
 }
-
+*/
 
 void Universe::whitenessOnly() {
     for(auto it = pixels.begin(); it != pixels.end(); it+=4) {
