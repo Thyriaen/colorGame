@@ -106,7 +106,7 @@ private:
         std::vector<unsigned char> pixels(height * width * 4);
 
 
-        for( unsigned int i = 0; i < 1000; i++ ) {
+        for( unsigned int i = 0; i < 100; i++ ) {
             const unsigned int x = rand() % width;
             const unsigned int y = rand() % height;
             const unsigned int offset = ( width * 4 * y ) + x * 4;

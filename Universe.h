@@ -7,6 +7,14 @@
 
 #include <vector>
 
+typedef struct {
+    unsigned char whiteness;
+    unsigned char red;
+    unsigned char blue;
+    unsigned char green;
+} point;
+
+
 class Universe {
   private:
     unsigned int width;
@@ -17,6 +25,7 @@ class Universe {
     unsigned int fieldSize;
 
     std::vector<unsigned char> pixels;
+    std::vector<point> world;
     std::vector<int> forces;
 
   public:
@@ -29,11 +38,17 @@ class Universe {
     unsigned int getWidth();
     std::vector<unsigned char> getPixels();
     void next();
+    void makeWorld();
+    void makePixels();
+    void makeStruct();
 
+    // make const inputs
+    long getForcePart(int fromX, int fromY, int toX, int toY, int Value);
+    void calculateForces(std::vector<int> repValues, std::vector<int> repX, std::vector<int> repY, std::vector<int> &forceX, std::vector<int> &forceY);
     void calculateRepresentative(int startIndex, int* repValue, int* repX, int* repY);
     void calculateRepresentatives(std::vector<int> &repValues, std::vector<int> &repX, std::vector<int> &repY);
     int getDistance(int x1, int y1, int x2, int y2);
-    int getForce(int fromX, int fromY, int toX, int toY);
+    long getForce(int fromX, int fromY, int toX, int toY, int fromValue, int toValue);
     unsigned char getOrientation(int fromX, int fromY, int toX, int toY);
 
     void whitenessOnly();

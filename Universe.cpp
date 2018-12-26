@@ -4,6 +4,7 @@
 #include <cmath>
 
 #define FS 40
+// calculation will be easy if this is a power of two
 
 // requires width and height divisible by 40
 Universe::Universe(unsigned int initWidth, unsigned int initHeight)
@@ -14,6 +15,7 @@ Universe::Universe(unsigned int initWidth, unsigned int initHeight)
     xFields = width / fieldSize;
     yFields = height / fieldSize;
     fields = xFields * yFields;
+    world.resize(initHeight * initWidth);
 }
 
 // empty universe
@@ -26,6 +28,7 @@ void Universe::init(unsigned int initWidth, unsigned int initHeight) {
     width = initWidth;
     height = initHeight;
     pixels.resize(initHeight * initWidth * 4, 0);
+    world.resize(initHeight * initWidth);
     fieldSize = FS;
     xFields = width / fieldSize;
     yFields = height / fieldSize;
@@ -99,15 +102,56 @@ unsigned char Universe::getOrientation(int fromX, int fromY, int toX, int toY) {
 
 }
 
-int Universe::getForce(int fromX, int fromY, int toX, int toY) {
+long Universe::getForcePart(int fromX, int fromY, int toX, int toY, int Value) {
 
     int distance = getDistance(fromX, fromY, toX, toY);
-    if(distance >= 255) {
-        return 0;
-    }
-    return distance >> 5;
+    return (Value / distance);
 
 }
+
+
+long Universe::getForce(int fromX, int fromY, int toX, int toY, int fromValue, int toValue) {
+
+    int distance = getDistance(fromX, fromY, toX, toY);
+    return (fromValue * toValue / distance) >> 8;
+
+}
+
+// blue, green ,red
+void Universe::makeWorld() {
+    int i = 0;
+    for(auto it = pixels.begin(); it != pixels.end(); it+=4) {
+        unsigned char whiteness = std::min({*(it), *(it+1), *(it+2)});
+        world[i].whiteness = whiteness;
+        world[i].blue = *(it) - whiteness;
+        world[i].green = *(it+1) - whiteness;
+        world[i].red = *(it+2) - whiteness;
+        i++;
+    }
+}
+
+void Universe::makePixels() {
+    int i = 0;
+    for(auto it = pixels.begin(); it != pixels.end(); it+=4) {
+        unsigned char whiteness = world[i].whiteness;
+        *(it) = whiteness + world[i].blue;
+        *(it+1) = whiteness + world[i].green;
+        *(it+2) = whiteness + world[i].red;
+        i++;
+    }
+}
+
+void Universe::makeStruct() {
+    int i = 0;
+    for(auto it = pixels.begin(); it != pixels.end(); it+=4) {
+        unsigned char whiteness = std::min({*(it), *(it+1), *(it+2)});
+        *(it) = whiteness;
+        *(it+1) = whiteness;
+        *(it+2) = whiteness;
+        i++;
+    }
+}
+
 
 // maybe use iterators
 void Universe::calculateRepresentative(int startIndex, int* repValue, int* repX, int* repY) {
@@ -156,12 +200,42 @@ void Universe::calculateRepresentative(int startIndex, int* repValue, int* repX,
 
 }
 
+void Universe::calculateForces(std::vector<int> repValues, std::vector<int> repX, std::vector<int> repY, std::vector<int> &forceX, std::vector<int> &forceY) {
+
+    int aField = 0;
+    int bField = 0;
+
+    for(int aY = 0; aY < fieldSize; aY++) {
+        for (int aX = 0; aX < fieldSize; aX++) {
+            long forcePart = 0;
+            for(int bY = 0; bY < fieldSize; bY++) {
+                for (int bX = 0; bX < fieldSize; bX++) {
+                    if(bX != aX || bY != aY) {
+                        forcePart += getForcePart(repX[aField],repY[aField], repX[bField], repY[bField], repValues[bField]);
+                    }
+
+
+                    bField++;
+                }
+            }
+
+
+            aField++;
+        }
+    }
+
+
+
+
+}
+
+
 void Universe::calculateRepresentatives(std::vector<int> &repValues, std::vector<int> &repX, std::vector<int> &repY) {
 
-    int offset = 0;
     int field = 0;
     for(int y = 0; y < yFields; y++) {
         for(int x = 0; x < xFields; x++) {
+            int offset = ( x + y * width ) * fieldSize * 4;
             calculateRepresentative(offset, &repValues[field], &repX[field], &repY[field] );
             field++;
         }
@@ -176,7 +250,12 @@ void Universe::next() {
     std::vector<int> repX(fields * 4);
     std::vector<int> repY(fields * 4);
 
-    calculateRepresentatives(repValues, repX, repY);
+    //makeWorld();
+    //calculateRepresentatives(repValues, repX, repY);
+    makePixels();
+    //makeStruct();
+
+
 
     pixels = newPixels;
 }
