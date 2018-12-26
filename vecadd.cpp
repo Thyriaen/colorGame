@@ -1,157 +1,98 @@
-/*
- * Copyright (c) 2015 Tobias Rautenkranz <mail@tobias.rautenkranz.ch>
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
-/*
- * ROCm 2.0 introduces full support for kernels written in the OpenCL 2.0 C language on certain devices
- * and systems.  Applications can detect this support by calling the “clGetDeviceInfo” query function
- * with “parame_name” argument set to “CL_DEVICE_OPENCL_C_VERSION”.  In order to make use of OpenCL 2.0
- * C language features, the application must include the option “-cl-std=CL2.0” in options passed to
- * the runtime API calls responsible for compiling or building device programs.  The complete
- * specification for the OpenCL 2.0 C language can be obtained using the following link:
- * https://www.khronos.org/registry/OpenCL/specs/opencl-2.0-openclc.pdf
- */
-
-
-#define CL_HPP_ENABLE_EXCEPTIONS
-#define CL_HPP_TARGET_OPENCL_VERSION 200
-
-#include <CL/cl2.hpp> // OpenCL 2 C++ Bindings
 #include <iostream>
-#include <vector>
 #include <algorithm>
+#include <iterator>
+#ifdef __APPLE__
+#include <OpenCL/cl.hpp>
+#else
+#include <CL/cl.hpp>
+#endif
 
-/*
- * Returns a Platfrom supporting OpenCL 2 or an empty one
- */
-cl::Platform findCL2Platform()
-{
-    std::vector<cl::Platform> platforms;
-    cl::Platform::get(&platforms);
+using namespace std;
+using namespace cl;
 
-    for (auto &p : platforms) {
-        std::string version = p.getInfo<CL_PLATFORM_VERSION>();
-        if (version.find("OpenCL 2.") != std::string::npos) {
-            return p;
-        }
-    }
-    return cl::Platform();
+
+int factorial(int n) {
+    return (n <= 1) ? 1 : n * factorial(n-1);
 }
 
-/*
- * OpenCL Program Source
- */
-const std::string rot13Kernel = R"====(
-kernel void rot13(global char* in, global char* out)
-{
-  int num = get_global_id(0);
-  char c = in[num];
-  if ('a' <= c && c <= 'z') {
-    out[num] = ((c - 'a') + 13) % 26 + 'a';
-  } else if ('A' <= c && c <= 'Z') {
-    out[num] = ((c - 'A') + 13) % 26 + 'A';
-  } else {
-    out[num] = c;
-  }
+
+Platform getPlatform() {
+    /* Returns the first platform found. */
+    std::vector<Platform> all_platforms;
+    Platform::get(&all_platforms);
+
+    if (all_platforms.size()==0) {
+        cout << "No platforms found. Check OpenCL installation!\n";
+        exit(1);
+    }
+    return all_platforms[0];
 }
-)====";
 
-int main(int argc, const char* argv[])
-{
-    if (argc != 1) {
-        std::cerr << "Usage: " << argv[0] << "\n";
-        std::cerr << "Reads a line from standard input and "
-                     "prints the rot13'ed text to the standard output.\n";
-        return EXIT_FAILURE;
+
+Device getDevice(Platform platform, int i, bool display=false) {
+    /* Returns the deviced specified by the index i on platform.
+     * If display is true, then all of the platforms are listed.
+     */
+    std::vector<Device> all_devices;
+    platform.getDevices(CL_DEVICE_TYPE_ALL, &all_devices);
+    if(all_devices.size()==0){
+        cout << "No devices found. Check OpenCL installation!\n";
+        exit(1);
     }
 
-    cl::Platform platform = findCL2Platform();
+    if (display) {
+        for (int j=0; j<all_devices.size(); j++)
+            printf("Device %d: %s\n", j, all_devices[j].getInfo<CL_DEVICE_NAME>().c_str());
+    }
+    return all_devices[i];
+}
 
-    if (0 == platform()) {
-        std::cerr << "No OpenCL 2 platform found.\n";
-        return EXIT_FAILURE;
+
+int main() {
+    const int n = 1024;    // size of vectors
+    const int c_max = 5;   // max value to iterate to
+    const int coeff = factorial(c_max);
+
+    int A[n], B[n], C[n];     // A is initial, B is result, C is expected result
+    for (int i=0; i<n; i++) {
+        A[i] = i;
+        C[i] = coeff * i;
+    }
+    Platform default_platform = getPlatform();
+    Device default_device     = getDevice(default_platform, 1);
+    Context context({default_device});
+    Program::Sources sources;
+
+    std::string kernel_code=
+            "void kernel multiply_by(global int* A, const int c) {"
+            "   A[get_global_id(0)] = c * A[get_global_id(0)];"
+            "}";
+    sources.push_back({kernel_code.c_str(), kernel_code.length()});
+
+    Program program(context, sources);
+    if (program.build({default_device}) != CL_SUCCESS) {
+        cout << "Error building: " << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(default_device) << std::endl;
+        exit(1);
     }
 
+    Buffer buffer_A(context, CL_MEM_READ_WRITE, sizeof(int) * n);
+    CommandQueue queue(context, default_device);
+    queue.enqueueWriteBuffer(buffer_A, CL_TRUE, 0, sizeof(int)*n, A);
 
-    cl::Platform defaultPlatform = cl::Platform::setDefault(platform);
-    if (defaultPlatform != platform) {
-        std::cerr << "Error setting default platform\n";
-        return EXIT_FAILURE;
+    Kernel multiply_by = Kernel(program, "multiply_by");
+    multiply_by.setArg(0, buffer_A);
+
+    for (int c=2; c<=c_max; c++) {
+        multiply_by.setArg(1, c);
+        queue.enqueueNDRangeKernel(multiply_by, NullRange, NDRange(n), NDRange(32));
     }
 
-    // Make OpenCL Program
-    cl::Program program(rot13Kernel);
+    queue.enqueueReadBuffer(buffer_A, CL_TRUE, 0, sizeof(int)*n, B);
 
-    try {
-        // Compile
-        program.build("-cl-std=CL2.0");
-    }
-    catch (cl::BuildError e) {
-        // Catch Compile failture and print diagnostics
-        std::cerr << "Erro building program helloworld.cl: " << e.what() << "\n";
-        for (auto &pair : e.getBuildLog()) {
-            std::cerr << pair.second << std::endl;
-        }
+    if (std::equal(std::begin(B), std::end(B), std::begin(C)))
+        cout << "Arrays are equal!" << endl;
+    else
+        cout << "Uh-oh, the arrays aren't equal!" << endl;
 
-        return EXIT_FAILURE;
-    }
-
-
-    //
-    // Get Input
-    //
-    std::string input;
-    std::getline(std::cin, input); // only reads on line (not till EOF)
-    if (std::cin.fail()) {
-        std::cerr << "\nInput error\n";
-        return EXIT_FAILURE;
-    }
-
-    size_t strlength = input.length();
-
-    //
-    // Setup Buffers
-    //
-    cl::Buffer inputBuffer(std::begin(input), std::end(input), true/*read only*/);
-
-    cl::Buffer outputBuffer = cl::Buffer(
-            CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY,
-            input.length() * sizeof(char));
-
-    //
-    // Make and run Kernel
-    //
-    auto kernel = cl::KernelFunctor<cl::Buffer, cl::Buffer>(program, "rot13");
-
-    kernel(cl::EnqueueArgs(cl::NDRange(input.length())),
-           inputBuffer, outputBuffer);
-
-
-    //
-    // Readback result
-    //
-    std::string output(input); // output is the same size as input
-    cl::copy(outputBuffer, std::begin(output), std::end(output));
-
-    std::cout << output << std::endl;
-
-    return EXIT_SUCCESS;
+    return 0;
 }
