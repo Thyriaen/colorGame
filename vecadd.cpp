@@ -19,6 +19,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+/*
+ * ROCm 2.0 introduces full support for kernels written in the OpenCL 2.0 C language on certain devices
+ * and systems.  Applications can detect this support by calling the “clGetDeviceInfo” query function
+ * with “parame_name” argument set to “CL_DEVICE_OPENCL_C_VERSION”.  In order to make use of OpenCL 2.0
+ * C language features, the application must include the option “-cl-std=CL2.0” in options passed to
+ * the runtime API calls responsible for compiling or building device programs.  The complete
+ * specification for the OpenCL 2.0 C language can be obtained using the following link:
+ * https://www.khronos.org/registry/OpenCL/specs/opencl-2.0-openclc.pdf
+ */
+
+
 #define CL_HPP_ENABLE_EXCEPTIONS
 #define CL_HPP_TARGET_OPENCL_VERSION 200
 
