@@ -51,11 +51,11 @@ void Universe::setPixels(unsigned char* rawPixels) {
 
 unsigned int Universe::getHeight() {
     return height;
-};
+}
 
 unsigned int Universe::getWidth() {
     return width;
-};
+}
 
 std::vector<unsigned char> Universe::getPixels() {
     return pixels;
