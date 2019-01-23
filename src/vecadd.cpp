@@ -1,6 +1,7 @@
 #include <iostream>
 #include <CL/cl.hpp>
 
+
 cl::Platform platform;
 cl::Device device;
 
@@ -24,12 +25,10 @@ void initOpenCL() {
     std::cout<< "Using device: "<< device.getInfo<CL_DEVICE_NAME>() << std::endl;
 }
 
-
-
 int main() {
     initOpenCL();
 
-    cl::Context context({device});
+    cl::Context context(device);
 
     cl::Program::Sources sources;
     std::string kernel_code=
