@@ -122,14 +122,12 @@ private:
         universe.setPixels(pixels.data());
     }
 
-
     void init() {
         initSDL();
         //loadImage();
-        loadRandomImage(1280, 720);
+        loadRandomImage(640, 360);
         createWindow();
         universe.whitenessOnly();
-
     }
 
     void input() {
@@ -160,7 +158,6 @@ private:
         SDL_RenderCopy( renderer, texture, nullptr, nullptr );
         SDL_RenderPresent( renderer );
     }
-
 
     void mainLoop() {
         state = RUNNING;
