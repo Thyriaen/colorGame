@@ -2,7 +2,11 @@
 #include "catch.hpp"
 
 #include <iostream>
+#include <cmath>
 #include "../Universe.h"
+#include <SDL2/SDL.h>
+
+
 
 /*
 TEST_CASE( "Testing single points and whiteness") {
@@ -77,7 +81,7 @@ TEST_CASE( "setPoint" ) {
     REQUIRE( rV[1] == 20 );
     REQUIRE( rV[2] == 10 );
 }
- */
+
 
 TEST_CASE( "get Distance function" ) {
     Universe universe(16, 16);
@@ -102,5 +106,27 @@ TEST_CASE( "get Distance function" ) {
     std::cout << int(universe.getOrientation(7,9, 0, -16)) << std::endl;
     std::cout << int(universe.getOrientation(1, 15, -12, 12)) << std::endl;
     std::cout << int(universe.getOrientation(-10, -4, 4, 12)) << std::endl;
+
+}
+ */
+
+TEST_CASE( " check sqrt function ") {
+
+    const Uint64 start = SDL_GetPerformanceCounter();
+
+    int blub[200000];
+
+    int x = 0;
+    for(int i=2; i < 100000; i++) {
+
+        //x = int(InvSqrt(i));
+        //x = int(1/std::sqrt(i));
+        blub[i] = x;
+    }
+
+    const Uint64 end = SDL_GetPerformanceCounter();
+    const static Uint64 freq = SDL_GetPerformanceFrequency();
+    const double seconds = ( end - start ) / static_cast< double >( freq );
+    std::cout << "Calculation time Quake: " << seconds * 1000.0 << "ms" << std::endl;
 
 }

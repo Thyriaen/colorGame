@@ -34,3 +34,4 @@
 #.idea settings
 .idea/
 cmake-build-debug/
+bin/
